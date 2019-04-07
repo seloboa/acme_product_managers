@@ -19,4 +19,6 @@ const syncAndSeed = async () => {
   }
 };
 
+syncAndSeed();
+
 module.exports = {db, Product, User, syncAndSeed};
