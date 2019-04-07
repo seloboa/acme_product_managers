@@ -51,28 +51,20 @@ export default class App extends Component {
 
   handleSave = async productId => {
     try {
-      const productToUpdateToDb = this.state.selectedManagers.find(
+      const newProduct = this.state.selectedManagers.find(
         product => product.id === productId
       );
 
-      const newProduct = await axios
-        .put(`/api/products/${productId}`, productToUpdateToDb)
-        .then(res => res.data[0]);
-
-      if (newProduct.userId === null) {
-        newProduct.user = null;
-      } else {
-        newProduct.user = this.state.managers.find(
-          manager => manager.id === newProduct.userId
-        );
-      }
+      await axios.put(`/api/products/${productId}`, {
+        userId: newProduct.userId,
+      });
 
       //update Products to the new updated product
       const newProductArr = this.state.products.slice();
       const newProductIndex = newProductArr.findIndex(
         product => product.id === newProduct.id
       );
-      newProductArr[newProductIndex] = newProduct;
+      newProductArr[newProductIndex] = JSON.parse(JSON.stringify(newProduct));
 
       //update Managers with their products
       const newManagerArr = this.state.managers.map(manager => {
@@ -93,7 +85,6 @@ export default class App extends Component {
       this.setState({
         products: newProductArr,
         managers: newManagerArr,
-
       });
     } catch (err) {
       console.log(err);
@@ -102,6 +93,7 @@ export default class App extends Component {
   };
 
   render() {
+    console.log(this.state);
     const {products, managers, error, selectedManagers} = this.state;
     const managersWithProducts = managers.filter(
       manager => manager.products.length > 0

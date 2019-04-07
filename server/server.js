@@ -48,11 +48,9 @@ app.get('/api/users', async (req, res, next) => {
 app.put('/api/products/:id', async (req, res, next) => {
   try {
     await db.sync();
-    const data = await Product.update(req.body, {
-      where: {id: req.params.id},
-      returning: true,
-    });
-    res.json(data[1]);
+    const product = await Product.findByPk(req.params.id);
+    const updatedProduct = await product.update(req.body);
+    res.send(updatedProduct);
   } catch (err) {
     next(err);
   }
