@@ -36,7 +36,6 @@ app.get('/api/users', async (req, res, next) => {
   try {
     await db.sync();
     const data = await User.findAll({
-      include: [{model: Product}],
       order: [['id', 'ASC']],
     });
     res.json(data);

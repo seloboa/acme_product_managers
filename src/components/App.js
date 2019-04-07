@@ -66,25 +66,9 @@ export default class App extends Component {
       );
       newProductArr[newProductIndex] = JSON.parse(JSON.stringify(newProduct));
 
-      //update Managers with their products
-      const newManagerArr = this.state.managers.map(manager => {
-        manager.products = manager.products.filter(
-          product => product.id !== newProduct.id
-        );
-        return manager;
-      });
-
-      if (newProduct.userId !== null) {
-        const newManagerIndex = newManagerArr.findIndex(
-          manager => manager.id === newProduct.userId
-        );
-        newManagerArr[newManagerIndex].products.push(newProduct);
-      }
-
       //set state
       this.setState({
         products: newProductArr,
-        managers: newManagerArr,
       });
     } catch (err) {
       console.log(err);
@@ -93,11 +77,11 @@ export default class App extends Component {
   };
 
   render() {
-    console.log(this.state);
     const {products, managers, error, selectedManagers} = this.state;
-    const managersWithProducts = managers.filter(
-      manager => manager.products.length > 0
-    );
+    const managersWithProducts = products
+      .map(product => product.user)
+      .filter(user => user !== null && user !== undefined)
+      .filter((value, index, self) => self.indexOf(value) === index);
     return (
       <Fragment>
         <div>
