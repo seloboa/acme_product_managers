@@ -2,7 +2,7 @@ import React from 'react';
 import Form from './Form';
 
 const Product = props => {
-  const {product, managers, handleChange} = props;
+  const {product, managers, handleChange, handleSave} = props;
   return (
     <div>
       <h6>{product.name}</h6>
@@ -10,6 +10,7 @@ const Product = props => {
         managers={managers}
         product={product}
         handleChange={handleChange}
+        handleSave={handleSave}
       />
     </div>
   );

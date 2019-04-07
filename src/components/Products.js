@@ -2,7 +2,7 @@ import React from 'react';
 import Product from './Product';
 
 const Products = props => {
-  const {products, managers, handleChange} = props;
+  const {products, managers, handleChange, handleSave} = props;
   return (
     <ul className="list-group">
       {products.map(product => {
@@ -12,6 +12,7 @@ const Products = props => {
               product={product}
               managers={managers}
               handleChange={handleChange}
+              handleSave={handleSave}
             />
           </li>
         );

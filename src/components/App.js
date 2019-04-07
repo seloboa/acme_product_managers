@@ -40,6 +40,17 @@ export default class App extends Component {
     this.setState({...this.state, products: newArr});
   };
 
+  handleSave = async productId => {
+    try {
+      const newProduct = await axios
+        .put(`/api/products/${productId}`)
+        .then(res => res.data);
+      console.log(newProduct);
+    } catch (err) {
+      this.setState({...this.state, error: err.message});
+    }
+  };
+
   render() {
     const {products, managers} = this.state;
     return (
@@ -60,6 +71,7 @@ export default class App extends Component {
               products={products}
               managers={managers}
               handleChange={this.handleChange}
+              handleSave={this.handleSave}
             />
           )}
         />

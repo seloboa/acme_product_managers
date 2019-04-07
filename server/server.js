@@ -38,4 +38,15 @@ app.get('/api/users', async (req, res, next) => {
   }
 });
 
+app.put('/api/products/:id', async (req, res, next) => {
+  try {
+    await db.sync();
+    console.log(req.body)
+    const data = await User.update(req.body, {where: {id: req.body.id}});
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.listen(port, () => console.log(`listening on port ${port}`));

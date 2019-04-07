@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Form = props => {
-  const {managers, product, handleChange} = props;
+  const {managers, product, handleChange, handleSave} = props;
   return (
     <div className="form-group">
       <label htmlFor="managerId">
@@ -24,7 +24,15 @@ const Form = props => {
           </option>
         ))}
       </select>
-      <button className="btn btn-primary">Save</button>
+      <button
+        className="btn btn-primary"
+        onClick={event => {
+          event.preventDefault();
+          handleSave();
+        }}
+      >
+        Save
+      </button>
     </div>
   );
 };
