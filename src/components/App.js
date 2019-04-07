@@ -27,6 +27,19 @@ export default class App extends Component {
     }
   }
 
+  handleChange = (event, productId) => {
+    const {target} = event;
+    const productIndex = this.state.products.findIndex(
+      product => product.id === productId
+    );
+    const newArr = this.state.products.slice();
+    newArr[productIndex].user = this.state.managers.find(
+      manager => manager.id === target.value * 1
+    );
+    newArr[productIndex].userId = target.value * 1;
+    this.setState({...this.state, products: newArr});
+  };
+
   render() {
     const {products, managers} = this.state;
     return (
@@ -42,7 +55,13 @@ export default class App extends Component {
         />
         <Route
           path="/products"
-          render={props => <Products products={products} managers={managers} />}
+          render={props => (
+            <Products
+              products={products}
+              managers={managers}
+              handleChange={this.handleChange}
+            />
+          )}
         />
         <Route
           path="/users"

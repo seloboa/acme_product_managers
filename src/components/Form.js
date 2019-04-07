@@ -1,18 +1,23 @@
 import React from 'react';
 
 const Form = props => {
-  const {managers} = props;
+  const {managers, product, handleChange} = props;
   return (
     <div className="form-group">
-      <lavel for="managerId">
+      <label htmlFor="managerId">
         <em>Product Manager</em>
-      </lavel>
+      </label>
       <select
         name="managerId"
-        class="form-control"
+        value={product.user ? product.user.id : 'none'}
+        onChange={event => {
+          event.preventDefault();
+          handleChange(event, product.id);
+        }}
+        className="form-control"
         style={{marginBottom: '10px', marginTop: '10px'}}
       >
-        <option>-- None --</option>
+        <option value="none">-- None --</option>
         {managers.map(manager => (
           <option key={manager.id} value={manager.id}>
             {manager.name}
