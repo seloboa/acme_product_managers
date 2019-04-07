@@ -51,24 +51,46 @@ export default class App extends Component {
       newProduct.user = this.state.managers.find(
         manager => manager.id === newProduct.userId
       );
-      const newArr = this.state.products.slice();
-      const newProductIndex = newArr.findIndex(
+
+      //update Products to the new updated product
+      const newProductArr = this.state.products.slice();
+      const newProductIndex = newProductArr.findIndex(
         product => product.id === newProduct.id
       );
-      newArr[newProductIndex] = newProduct;
-      this.setState({...this.state, products: newArr});
+      newProductArr[newProductIndex] = newProduct;
+
+      //update Managers with their products
+      const newManagerArr = this.state.managers.map(manager => {
+        manager.products = manager.products.filter(
+          product => product.id !== newProduct.id
+        );
+        return manager;
+      });
+      const newManagerIndex = newManagerArr.findIndex(
+        manager => manager.id === newProduct.userId
+      );
+      newManagerArr[newManagerIndex].products.push(newProduct);
+      this.setState({
+        ...this.state,
+        products: newProductArr,
+        managers: newManagerArr,
+      });
     } catch (err) {
       this.setState({...this.state, error: err.message});
     }
   };
 
   render() {
-    const {products, managers} = this.state;
+    const {products, managers, error} = this.state;
+    const managersWithProducts = managers.filter(
+      manager => manager.products.length > 0
+    );
     return (
       <Fragment>
         <div>
           <h1>Acme Product Managers</h1>
-          <Nav />
+          <Nav managers={managersWithProducts} />
+          {error ? <h2 style={{color: 'red'}}>{`error: ${error}`}</h2> : ''}
         </div>
         <Route
           exact
@@ -77,7 +99,7 @@ export default class App extends Component {
         />
         <Route
           path="/products"
-          render={props => (
+          render={() => (
             <Products
               products={products}
               managers={managers}
@@ -88,7 +110,7 @@ export default class App extends Component {
         />
         <Route
           path="/users"
-          render={props => <Managers managers={managers} />}
+          render={() => <Managers managers={managersWithProducts} />}
         />
       </Fragment>
     );
