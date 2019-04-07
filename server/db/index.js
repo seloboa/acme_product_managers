@@ -13,7 +13,6 @@ const syncAndSeed = async () => {
     await Promise.all(productNames.map(name => Product.create({name: name})));
     await Promise.all(userNames.map(name => User.create({name: name})));
     console.log('db seeded');
-    await db.close();
   } catch (err) {
     console.log(err);
   }
