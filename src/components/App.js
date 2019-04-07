@@ -42,7 +42,7 @@ export default class App extends Component {
         />
         <Route
           path="/products"
-          render={props => <Products products={products} />}
+          render={props => <Products products={products} managers={managers} />}
         />
         <Route
           path="/users"
