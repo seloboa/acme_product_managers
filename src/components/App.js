@@ -11,6 +11,7 @@ export default class App extends Component {
     this.state = {
       products: [],
       managers: [],
+      selectedManagers: [],
       error: '',
     };
   }
@@ -21,28 +22,33 @@ export default class App extends Component {
         axios.get('/api/products').then(response => response.data),
         axios.get('/api/users').then(response => response.data),
       ]);
-      this.setState({...this.state, products: products, managers: managers});
+      const selectedManagers = JSON.parse(JSON.stringify(products));
+      this.setState({
+        products,
+        managers,
+        selectedManagers,
+      });
     } catch (err) {
-      this.setState({...this.state, error: err.message});
+      this.setState({error: err.message});
     }
   }
 
   handleChange = (event, productId) => {
     const {target} = event;
-    const productIndex = this.state.products.findIndex(
+    const productIndex = this.state.selectedManagers.findIndex(
       product => product.id === productId
     );
-    const newArr = this.state.products.slice();
+    const newArr = this.state.selectedManagers.slice();
     newArr[productIndex].user = this.state.managers.find(
       manager => manager.id === target.value * 1
     );
     newArr[productIndex].userId = target.value * 1;
-    this.setState({...this.state, products: newArr});
+    this.setState({selectedManagers: newArr});
   };
 
   handleSave = async productId => {
     try {
-      const productToUpdateToDb = this.state.products.find(
+      const productToUpdateToDb = this.state.selectedManagers.find(
         product => product.id === productId
       );
       const newProduct = await axios
@@ -51,13 +57,15 @@ export default class App extends Component {
       newProduct.user = this.state.managers.find(
         manager => manager.id === newProduct.userId
       );
-
       //update Products to the new updated product
       const newProductArr = this.state.products.slice();
       const newProductIndex = newProductArr.findIndex(
         product => product.id === newProduct.id
       );
       newProductArr[newProductIndex] = newProduct;
+      console.log(newProductArr);
+      //update selectedManagers front end to appear same as product
+      const newSelectedManagersArr = JSON.parse(JSON.stringify(newProductArr));
 
       //update Managers with their products
       const newManagerArr = this.state.managers.map(manager => {
@@ -70,10 +78,12 @@ export default class App extends Component {
         manager => manager.id === newProduct.userId
       );
       newManagerArr[newManagerIndex].products.push(newProduct);
+
+      //set state
       this.setState({
-        ...this.state,
         products: newProductArr,
         managers: newManagerArr,
+        selectedManagers: newSelectedManagersArr,
       });
     } catch (err) {
       this.setState({...this.state, error: err.message});
@@ -81,7 +91,7 @@ export default class App extends Component {
   };
 
   render() {
-    const {products, managers, error} = this.state;
+    const {products, managers, error, selectedManagers} = this.state;
     const managersWithProducts = managers.filter(
       manager => manager.products.length > 0
     );
@@ -102,6 +112,7 @@ export default class App extends Component {
           render={() => (
             <Products
               products={products}
+              selectedManagers={selectedManagers}
               managers={managers}
               handleChange={this.handleChange}
               handleSave={this.handleSave}

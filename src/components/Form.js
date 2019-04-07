@@ -1,7 +1,11 @@
 import React from 'react';
 
 const Form = props => {
-  const {managers, product, handleChange, handleSave} = props;
+  const {managers, product, handleChange, handleSave, selectedManagers} = props;
+  const findProduct = selectedManagers.find(
+    changedProduct => changedProduct.id === product.id
+  );
+  const disabled = product.userId === findProduct.userId;
   return (
     <div className="form-group">
       <label htmlFor="managerId">
@@ -9,7 +13,7 @@ const Form = props => {
       </label>
       <select
         name="managerId"
-        value={product.user ? product.user.id : 'none'}
+        value={findProduct ? findProduct.user.id : 'none'}
         onChange={event => {
           event.preventDefault();
           handleChange(event, product.id);
@@ -26,6 +30,7 @@ const Form = props => {
       </select>
       <button
         className="btn btn-primary"
+        disabled={disabled}
         onClick={event => {
           event.preventDefault();
           handleSave(product.id);
