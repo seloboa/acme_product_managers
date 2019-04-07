@@ -71,17 +71,25 @@ export default class App extends Component {
         products: newProductArr,
       });
     } catch (err) {
-      console.log(err);
       this.setState({error: err.message});
     }
   };
 
   render() {
     const {products, managers, error, selectedManagers} = this.state;
-    const managersWithProducts = products
+    const managersWithProducts = [];
+    products
       .map(product => product.user)
       .filter(user => user !== null && user !== undefined)
-      .filter((value, index, self) => self.indexOf(value) === index);
+      .forEach(user => {
+        if (
+          managersWithProducts.findIndex(
+            manager => manager.name === user.name
+          ) <= -1
+        ) {
+          managersWithProducts.push(user);
+        }
+      });
     return (
       <Fragment>
         <div>
