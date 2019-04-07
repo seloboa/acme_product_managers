@@ -22,6 +22,7 @@ export default class App extends Component {
         axios.get('/api/products').then(response => response.data),
         axios.get('/api/users').then(response => response.data),
       ]);
+      //deep copy products to make a managed state prop
       const selectedManagers = JSON.parse(JSON.stringify(products));
       this.setState({
         products,
@@ -42,7 +43,9 @@ export default class App extends Component {
     newArr[productIndex].user = this.state.managers.find(
       manager => manager.id === target.value * 1
     );
-    newArr[productIndex].userId = target.value * 1;
+    target.value === '000'
+      ? (newArr[productIndex].userId = null)
+      : (newArr[productIndex].userId = target.value * 1);
     this.setState({selectedManagers: newArr});
   };
 
@@ -51,21 +54,25 @@ export default class App extends Component {
       const productToUpdateToDb = this.state.selectedManagers.find(
         product => product.id === productId
       );
+
       const newProduct = await axios
         .put(`/api/products/${productId}`, productToUpdateToDb)
         .then(res => res.data[0]);
-      newProduct.user = this.state.managers.find(
-        manager => manager.id === newProduct.userId
-      );
+
+      if (newProduct.userId === null) {
+        newProduct.user = null;
+      } else {
+        newProduct.user = this.state.managers.find(
+          manager => manager.id === newProduct.userId
+        );
+      }
+
       //update Products to the new updated product
       const newProductArr = this.state.products.slice();
       const newProductIndex = newProductArr.findIndex(
         product => product.id === newProduct.id
       );
       newProductArr[newProductIndex] = newProduct;
-      console.log(newProductArr);
-      //update selectedManagers front end to appear same as product
-      const newSelectedManagersArr = JSON.parse(JSON.stringify(newProductArr));
 
       //update Managers with their products
       const newManagerArr = this.state.managers.map(manager => {
@@ -74,19 +81,23 @@ export default class App extends Component {
         );
         return manager;
       });
-      const newManagerIndex = newManagerArr.findIndex(
-        manager => manager.id === newProduct.userId
-      );
-      newManagerArr[newManagerIndex].products.push(newProduct);
+
+      if (newProduct.userId !== null) {
+        const newManagerIndex = newManagerArr.findIndex(
+          manager => manager.id === newProduct.userId
+        );
+        newManagerArr[newManagerIndex].products.push(newProduct);
+      }
 
       //set state
       this.setState({
         products: newProductArr,
         managers: newManagerArr,
-        selectedManagers: newSelectedManagersArr,
+
       });
     } catch (err) {
-      this.setState({...this.state, error: err.message});
+      console.log(err);
+      this.setState({error: err.message});
     }
   };
 

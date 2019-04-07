@@ -13,7 +13,7 @@ const Form = props => {
       </label>
       <select
         name="managerId"
-        value={findProduct ? findProduct.user.id : 'none'}
+        value={findProduct.user ? findProduct.user.id : 'none'}
         onChange={event => {
           event.preventDefault();
           handleChange(event, product.id);
@@ -21,7 +21,7 @@ const Form = props => {
         className="form-control"
         style={{marginBottom: '10px', marginTop: '10px'}}
       >
-        <option value="none">-- None --</option>
+        <option value='000'>-- None --</option>
         {managers.map(manager => (
           <option key={manager.id} value={manager.id}>
             {manager.name}
