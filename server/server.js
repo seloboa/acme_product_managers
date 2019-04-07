@@ -1,10 +1,11 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const {db, Product, User} = require('./db/index');
+const {db, Product, User, syncAndSeed} = require('./db/index');
 
 const port = process.env.PORT || 3000;
 
+syncAndSeed();
 //json parser middleware
 app.use(express.json());
 
