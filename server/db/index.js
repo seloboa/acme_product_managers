@@ -8,7 +8,7 @@ const syncAndSeed = async () => {
   try {
     const productNames = ['bar', 'bazz', 'foo'];
     const userNames = ['moe', 'larry', 'curly'];
-    await db.sync({force:true});
+    await db.sync({force: true});
     await Promise.all(productNames.map(name => Product.create({name: name})));
     await Promise.all(userNames.map(name => User.create({name: name})));
     console.log('db seeded');
@@ -18,6 +18,4 @@ const syncAndSeed = async () => {
   }
 };
 
-syncAndSeed();
-
-module.exports = {db, Product, User};
+module.exports = {db, Product, User, syncAndSeed};
