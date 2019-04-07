@@ -21,7 +21,10 @@ app.get('/', (req, res, next) =>
 app.get('/api/products', async (req, res, next) => {
   try {
     await db.sync();
-    const data = await Product.findAll({include: [{model: User}]});
+    const data = await Product.findAll({
+      include: [{model: User}],
+      order: [['id', 'ASC']],
+    });
     res.json(data);
   } catch (err) {
     next(err);
@@ -31,7 +34,7 @@ app.get('/api/products', async (req, res, next) => {
 app.get('/api/users', async (req, res, next) => {
   try {
     await db.sync();
-    const data = await User.findAll();
+    const data = await User.findAll({order: [['id', 'ASC']]});
     res.json(data);
   } catch (err) {
     next(err);
@@ -41,9 +44,11 @@ app.get('/api/users', async (req, res, next) => {
 app.put('/api/products/:id', async (req, res, next) => {
   try {
     await db.sync();
-    console.log(req.body)
-    const data = await User.update(req.body, {where: {id: req.body.id}});
-    res.json(data);
+    const data = await Product.update(req.body, {
+      where: {id: req.params.id},
+      returning: true,
+    });
+    res.json(data[1]);
   } catch (err) {
     next(err);
   }

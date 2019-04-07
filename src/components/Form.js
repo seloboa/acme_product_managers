@@ -28,7 +28,7 @@ const Form = props => {
         className="btn btn-primary"
         onClick={event => {
           event.preventDefault();
-          handleSave();
+          handleSave(product.id);
         }}
       >
         Save

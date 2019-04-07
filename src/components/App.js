@@ -42,10 +42,21 @@ export default class App extends Component {
 
   handleSave = async productId => {
     try {
+      const productToUpdateToDb = this.state.products.find(
+        product => product.id === productId
+      );
       const newProduct = await axios
-        .put(`/api/products/${productId}`)
-        .then(res => res.data);
-      console.log(newProduct);
+        .put(`/api/products/${productId}`, productToUpdateToDb)
+        .then(res => res.data[0]);
+      newProduct.user = this.state.managers.find(
+        manager => manager.id === newProduct.userId
+      );
+      const newArr = this.state.products.slice();
+      const newProductIndex = newArr.findIndex(
+        product => product.id === newProduct.id
+      );
+      newArr[newProductIndex] = newProduct;
+      this.setState({...this.state, products: newArr});
     } catch (err) {
       this.setState({...this.state, error: err.message});
     }
